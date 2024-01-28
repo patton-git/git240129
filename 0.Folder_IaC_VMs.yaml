@@ -1,0 +1,65 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  vars:
+    ansible_python_interpreter: /bin/python3
+    vcenter_hostname: "172.0.10.10"
+    vcenter_username: "s00@edu.git"
+    vcenter_password: "VMware1!"
+    datacenter_name: "Datacenter"
+    parent_folder: "1.Internal-Training/Students"
+    esxi_username: "root"
+    esxi_password: "VMware1!"
+    public_net:  "DPG-172.0.10.x"
+    datastore_name: "vsanDatastore"
+    IaC_template: "Win-IaC-2401"
+    snapshot_name: "linked"
+
+    SID_ESXi: 
+    - { id: S00, host: 172.0.10.13 }
+    - { id: S01, host: 172.0.10.11 }
+    - { id: S02, host: 172.0.10.12 }
+    - { id: S03, host: 172.0.10.13 }
+    - { id: S04, host: 172.0.10.11 }
+    - { id: S05, host: 172.0.10.12 }
+    - { id: S06, host: 172.0.10.13 }
+    - { id: S07, host: 172.0.10.11 }
+    - { id: S08, host: 172.0.10.12 }
+    - { id: S09, host: 172.0.10.13 }
+    - { id: S10, host: 172.0.10.11 }
+    - { id: S11, host: 172.0.10.12 }
+    - { id: S12, host: 172.0.10.13 }
+
+  tasks: 
+  - name: 01. Create a Project folder
+    community.vmware.vcenter_folder:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: false
+      datacenter_name: '{{ datacenter_name }}'
+      folder_name: '{{ item.id }}'
+      parent_folder: '{{ parent_folder }}'
+      state: present
+    loop: "{{ SID_ESXi }}"  
+    register: sub_folder_creation_result
+    delegate_to: localhost
+
+  - name: 02. Linked Clone for IaC VM
+    community.vmware.vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: no
+      name: "{{ item.id + '-IaC' }}"
+#      state: "poweredoff"
+      datacenter: '{{ datacenter_name }}'
+      folder: "{{ datacenter_name + '/vm/' + parent_folder + '/' + item.id }}"
+      esxi_hostname: '{{ item.host }}'
+      datastore: "{{ datastore_name }}"
+      template: "{{ IaC_template }}"
+      linked_clone: True
+      snapshot_src: "{{ snapshot_name }}"
+    loop: "{{ SID_ESXi }}"  
+    delegate_to: localhost

@@ -1,0 +1,22 @@
+ansible_python_interpreter: /bin/python3
+
+student_ID: "S00"
+
+vcenter_hostname: "172.0.10.10"
+vcenter_username: "S00@edu.git"
+vcenter_password: "VMware1!"
+
+datacenter_name: "Datacenter"
+folder_prefix: "1.Internal-Training/Students"
+
+# S01, S04, S07, S10, S13 --> esxi_host : 172.0.10.11
+# S02, S05, S08, S11, S14 --> esxi_host : 172.0.10.12
+# S03, S06, S09, S12, S15 --> esxi_host : 172.0.10.13
+esxi_hostname: "172.0.10.13"
+esxi_password: "VMware1!"
+esxi_username: "root"
+
+public_net: "DPG-172.0.10.x"
+private_net: "{{ student_ID + '-Trunk' }}"
+
+datastore_name: "vsanDatastore"

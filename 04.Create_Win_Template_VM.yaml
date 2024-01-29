@@ -35,7 +35,7 @@
           unit_number: 0
           state: present
           type: iso
-          iso_path: '{{ "[" + datastore_name + "]\ISOs\en-us_windows_server_version_23h2_updated_jan_2024_x64_dvd_b4478b01.iso" }}'
+          iso_path: '{{ "[" + datastore_name + "]\ISOs\ko-kr_windows_server_2022_updated_jan_2024_x64_dvd_2b7a0c9f.iso" }}'
       with_items:
       - { vmname: "{{ student_ID + '-Win2022-Template'}}", guest_id: windows2019srvNext_64Guest, cpus: 2, memory: 4096,  disk_gb: 90 }
       delegate_to: localhost
